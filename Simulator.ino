@@ -2,13 +2,104 @@ void setup() // Eh executada somente uma vez
 {
     Serial.begin(9600);
     Serial.println("Hello World!");
-    pinMode(0,OUTPUT);
-    pinMode(2,OUTPUT);
-    pinMode(4,OUTPUT);
+    pinMode(0, OUTPUT);
+    pinMode(2, OUTPUT);
+    pinMode(4, OUTPUT);
 
+    //math
     int val = 127;
+
+    Serial.println(val);
     val = map(val, 0, 1023, 0, 255);
     analogWrite(9, val);
+
+    Serial.println(val);
+
+    int a = -127;
+
+    Serial.println(a);
+    a = abs(a);
+    Serial.println(a);
+
+    float b, c, MAX, MIN, POW, se, co, tg;
+
+    b = sqrt(a);
+    Serial.println(b);
+    c = sq(b);
+    Serial.println(c);
+    MAX = max(a, b);
+    Serial.println(MAX);
+    MIN = min(a, b);
+    Serial.println(MIN);
+    POW = pow(a, 4);
+    Serial.println(POW);
+    se = sin(a);
+    Serial.println(se);
+    co = cos(a);
+    Serial.println(co);
+    tg = tan(a);
+    Serial.println(tg);
+
+    //characters
+    char LET;
+    bool let;
+
+    LET = 'a';
+    let = isAlpha(LET);
+    Serial.println(let);
+    LET = '1';
+    let = isAlphaNumeric(LET);
+    Serial.println(let);
+    LET = 'a';
+    let = isAscii(LET);
+    Serial.println(let);
+    LET = 'a';
+    let = isControl(LET);
+    Serial.println(let);
+    LET = '1';
+    let = isDigit(LET);
+    Serial.println(let);
+    LET = 'a';
+    let = isGraph(LET);
+    Serial.println(let);
+    LET = '1';
+    let = isHexadecimalDigit(LET);
+    Serial.println(let);
+    LET = 'a';
+    let = isLowerCase(LET);
+    Serial.println(let);
+    LET = 'A';
+    let = isUpperCase(LET);
+    Serial.println(let);
+    LET = 'a';
+    let = isPrintable(LET);
+    Serial.println(let);
+    LET = 'a';
+    let = isPunct(LET);
+    Serial.println(let);
+    LET = 'a';
+    let = isWhitespace(LET);
+    Serial.println(let);
+    LET = ' ';
+    let = isSpace(LET);
+    Serial.println(let);
+
+    //bit
+    Serial.print("bit ");
+    Serial.print(141, BIN);
+    Serial.print(" = ");
+    Serial.println(bit(141), BIN);
+
+    //random
+    Serial.print("Here's a random number between 300 and 981: ");
+    Serial.println(random(300, 982));
+    Serial.print("Here's the same number again: ");
+    Serial.println(random(300, 982));
+    randomSeed(26101999);
+    Serial.print("Now, this is a (hopefully) different number between 300 and 981: ");
+    Serial.println(random(300, 982));
+    Serial.println("I was wrong e-e");
+
 
 }
 

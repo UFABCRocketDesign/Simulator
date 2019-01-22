@@ -11,60 +11,68 @@
 //#include <ctime>
 #include <cctype>
 
-#define HIGH 1
-#define LOW 0
+#include "HardwareSerial.h"
 
-#define INPUT 0
-#define OUTPUT 1
-#define INPUT_PULLUP 2
+#define HIGH 0x1
+#define LOW  0x0
 
-using namespace std;
+#define INPUT 0x0
+#define OUTPUT 0x1
+#define INPUT_PULLUP 0x2
+
+#define PI 3.1415926535897932384626433832795
+#define HALF_PI 1.5707963267948966192313216916398
+#define TWO_PI 6.283185307179586476925286766559
+#define DEG_TO_RAD 0.017453292519943295769236907684886
+#define RAD_TO_DEG 57.295779513082320876798154814105
+#define EULER 2.718281828459045235360287471352
 
 namespace simulator
 {
     const int pinAmount = 10;
-    struct Pin
+    struct PinIO
     {
-        int state = -1;
+        int output = -1; // O
+        int input = -1; // I
         int mode = -1;
     };
 
-    void showPinsState();
-    void showPinsMode();
+    void showPinsMode(std::ostream& out, unsigned long long I);
+    void showPinsOutput(std::ostream& out, unsigned long long I);
+    void showPinsInput(std::ostream& out, unsigned long long I);
 }
 
-class HardwareSerial
-{
-    int baudRate;
-public:
-    void begin(int bd);
-    void println(string p);
-};
-
-extern HardwareSerial Serial;
-
-void pinMode(int pin, int mode);
+// Digital I/O
+bool digitalRead(int pin);
 void digitalWrite(int pin, int state);
+void pinMode(int pin, int mode);
+
+// Analog I/O
+int analogRead(int pin);
 void analogWrite(int pin, int value);
 
 // Math
-// abs() Done by cmath
-template<typename T> T constrain(T x, T a, T b);
+// abs() // Done by cmath
+#define constrain(amt,low,high) ((amt)<(low)?(low):((amt)>(high)?(high):(amt)))
 long map(long x, long in_min, long in_max, long out_min, long out_max);
-template<typename T> T max( T x, T y);
-template<typename T> T min(T x, T y);
-// pow() Done by cmath
-template<typename T> T sq(T x);
-// sqrt() Done by cmath
+#define max(a,b) ((a)>(b)?(a):(b))
+#define min(a,b) ((a)<(b)?(a):(b))
+#define round(x)     ((x)>=0?(long)((x)+0.5):(long)((x)-0.5))
+#define radians(deg) ((deg)*DEG_TO_RAD)
+#define degrees(rad) ((rad)*RAD_TO_DEG)
+// pow() // Done by cmath
+#define sq(x) ((x)*(x))
+// sqrt() // Done by cmath
 
-/* Trigonometry
-    Done by cmath
-*/
+// Trigonometry
+// cos() // Done by cmath
+// sin() // Done by cmath
+// tan() // Done by cmath
 
 //Characters
-bool IsAlpha(char x);
+bool isAlpha(char x);
 bool isAlphaNumeric(char x);
-//bool isAscii(char x);
+bool isAscii(char x);
 bool isControl(char x);
 bool isDigit(char x);
 bool isGraph(char x);

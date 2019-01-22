@@ -4,90 +4,85 @@
 
 namespace simulator
 {
-    Pin pins[pinAmount];
+    PinIO pins[pinAmount];
 }
 
-void simulator::showPinsMode()
+void simulator::showPinsMode(std::ostream& out, unsigned long long I)
 {
-    cout << "M[";
+    out << I << "\tM[";
     for(int i = 0; i < pinAmount; i++)
     {
-        if (pins[i].mode<0) cout << "_";
-        else cout << (pins[i].mode);
-        cout << (pinAmount-1!=i?", ":"");
+        if (pins[i].mode<0) out << "_";
+        else out << (pins[i].mode);
+        out << (pinAmount-1!=i?", ":"");
     }
-    cout << "]" << endl;
+    out << "]" << std::endl;
 }
 
-void simulator::showPinsState()
+void simulator::showPinsOutput(std::ostream& out, unsigned long long I)
 {
-    cout << "S[";
+    out << I << "\tO[";
     for(int i = 0; i < pinAmount; i++)
     {
-        if (pins[i].state<0) cout << "_";
-        else cout << (pins[i].state);
-        cout << (pinAmount-1!=i?", ":"");
+        if (pins[i].output<0) out << "_";
+        else out << (pins[i].output);
+        out << (pinAmount-1!=i?", ":"");
     }
-    cout << "]" << endl;
+    out << "]" << std::endl;
 }
 
-void HardwareSerial::begin(int bd)
+void simulator::showPinsInput(std::ostream& out, unsigned long long I)
 {
-    baudRate = bd;
-}
-//println(string S)
-void HardwareSerial::println(string p)
-{
-    cout << p << endl;
+    out << I << "\tI[";
+    for(int i = 0; i < pinAmount; i++)
+    {
+        if (pins[i].input<0) out << "_";
+        else out << (pins[i].input);
+        out << (pinAmount-1!=i?", ":"");
+    }
+    out << "]" << std::endl;
 }
 
-HardwareSerial Serial;
-
-void pinMode(int pin, int mode)
+bool digitalRead(int pin)
 {
-    simulator::pins[pin].mode = mode;
+    if( -1 != simulator::pins[pin].mode ) return simulator::pins[pin].input;
+    return HIGH;
 }
 
 void digitalWrite(int pin, int state)
 {
-    simulator::pins[pin].state = state;
+    simulator::pins[pin].output = state;
+}
+
+void pinMode(int pin, int mode)
+{
+    simulator::pins[pin].mode = mode;
+    if(mode == INPUT_PULLUP)
+    {
+        simulator::pins[pin].output = HIGH;
+        simulator::pins[pin].input = HIGH;
+    }
+}
+
+int analogRead(int pin)
+{
+    if( -1 != simulator::pins[pin].mode ) return simulator::pins[pin].input;
+    return HIGH;
 }
 
 void analogWrite(int pin, int value)
 {
-    simulator::pins[pin].state = value;
+    simulator::pins[pin].output = value;
 }
 
 // Math
-template<typename T> T constrain(T x, T a, T b)
-{
-    if(x < a) return a;
-    if(x > b) return b;
-    return x;
-}
-
-template<typename T> T max(T x, T y)
-{
-    return (x > y) ? (x) : (y);
-}
-
-template<typename T> T min(T x, T y)
-{
-    return (x < y) ? (x) : (y);
-}
-
 long map(long x, long in_min, long in_max, long out_min, long out_max)
 {
   return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
 }
 
-template<typename T> T sq(T x)
-{
-    return x * x;
-}
-
 //Characters
-bool IsAlpha(char x)
+bool isAlpha(char x)
 {
     return isalpha(x);
 }
@@ -95,11 +90,10 @@ bool isAlphaNumeric(char x)
 {
     return isalnum(x);
 }
-/*bool isAscii(char x)
+bool isAscii(char x)
 {
-
+    return (0x00 <= x) && (0x7F >= x);
 }
-*/
 bool isControl(char x)
 {
     return iscntrl(x);
@@ -201,19 +195,7 @@ void bitSet(long &x, int n)
 }
 void bitWrite(long &x, int n, bool b)
 {
-	//x = ~((~(long(b)) << n) ^ x);
-
-    /*
-	 * 000000000000b =         b
-     * 0000000b00000 =         b << n
-     * 1111111q11111 =       ~(b << n)
-     * 1011010101011 =   x
-     * 0100101q10100 =   x ^ ~(b << n)
-     * 1011010b01011 = ~(x ^ ~(b << n))
-     */
-
-	if (b) x |= (0X01 << n);
-    else x &= ~(0X01 << n);
+    x = b ? x|(0X01 << n) : x&~(0X01 << n);
 }
 char highByte(short x)
 {

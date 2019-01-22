@@ -4,13 +4,13 @@
 
 ### Digital I/O
 
-- [ ] `digitalRead()`
+- [x] `digitalRead()`
 - [x] `digitalWrite()`
 - [x] `pinMode()`
 
 ### Analog I/O
 
-- [ ] `analogRead()`
+- [x] `analogRead()`
 - [ ] `analogReference()`
 - [x] `analogWrite()`
 
@@ -51,7 +51,7 @@
 
 - [x] `isAlpha()`
 - [x] `isAlphaNumeric()`
-- [ ] `isAscii()`
+- [x] `isAscii()`
 - [x] `isControl()`
 - [x] `isDigit()`
 - [x] `isGraph()`

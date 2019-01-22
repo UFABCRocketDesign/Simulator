@@ -5,6 +5,11 @@ void setup() // Eh executada somente uma vez
     pinMode(0,OUTPUT);
     pinMode(2,OUTPUT);
     pinMode(4,OUTPUT);
+
+    int val = 127;
+    val = map(val, 0, 1023, 0, 255);
+    analogWrite(9, val);
+
 }
 
 void loop() // Fica em loop indefinidamente

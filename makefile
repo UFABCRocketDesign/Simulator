@@ -1,6 +1,6 @@
 GPP = g++
 ADDITIONAL_FLAGS = 
-CFLAGS = $(ADDITIONAL_FLAGS) -std=c++11 -pedantic -Wall -Werror -lm
+CFLAGS = $(ADDITIONAL_FLAGS) -std=c++14 -pedantic -Wall -Werror -lm
 
 RUNNER = Simulator.run
 ADDITIONAL_SOURCE = simulator.cpp

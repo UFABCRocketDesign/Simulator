@@ -25,10 +25,10 @@
 
 ### Time
 
-- [ ] `delay()`
-- [ ] `delayMicroseconds()`
-- [ ] `micros()`
-- [ ] `millis()`
+- [x] `delay()`
+- [x] `delayMicroseconds()`
+- [x] `micros()`
+- [x] `millis()`
 
 ### Math
 
@@ -74,7 +74,7 @@
 - [x] `bitClear()`
 - [x] `bitRead()`
 - [x] `bitSet()`
-- [ ] `bitWrite()`
+- [x] `bitWrite()`
 - [x] `highByte()`
 - [x] `lowByte()`
 

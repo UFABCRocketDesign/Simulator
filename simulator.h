@@ -5,11 +5,12 @@
 
 #include <iostream>
 #include <iomanip>
-#include <string>
-#include <cmath>
 #include <cstdlib>
-//#include <ctime>
+#include <string>
+#include <chrono>
+#include <future>
 #include <cctype>
+#include <cmath>
 
 #include "HardwareSerial.h"
 
@@ -29,13 +30,18 @@
 
 namespace simulator
 {
-    const int pinAmount = 10;
+    constexpr int pinAmount = 10;
     struct PinIO
     {
         int output = -1; // O
         int input = -1; // I
         int mode = -1;
     };
+
+    extern PinIO pins[];
+
+    extern std::chrono::time_point<std::chrono::high_resolution_clock> Ti; // Initial time
+    extern std::chrono::time_point<std::chrono::high_resolution_clock> Tc; // Current time
 
     void showPinsMode(std::ostream& out, unsigned long long I);
     void showPinsOutput(std::ostream& out, unsigned long long I);
@@ -50,6 +56,12 @@ void pinMode(int pin, int mode);
 // Analog I/O
 int analogRead(int pin);
 void analogWrite(int pin, int value);
+
+// Time
+void delay(unsigned long ms);
+void delayMicroseconds(unsigned long us);
+unsigned long micros();
+unsigned long millis();
 
 // Math
 // abs() // Done by cmath

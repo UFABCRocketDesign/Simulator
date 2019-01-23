@@ -5,6 +5,9 @@
 namespace simulator
 {
     PinIO pins[pinAmount];
+
+    std::chrono::time_point<std::chrono::high_resolution_clock> Ti; // Initial time
+    std::chrono::time_point<std::chrono::high_resolution_clock> Tc; // Current time
 }
 
 void simulator::showPinsMode(std::ostream& out, unsigned long long I)
@@ -52,6 +55,7 @@ bool digitalRead(int pin)
 void digitalWrite(int pin, int state)
 {
     simulator::pins[pin].output = state;
+    if(simulator::pins[pin].mode == OUTPUT) simulator::pins[pin].input = state;
 }
 
 void pinMode(int pin, int mode)
@@ -73,6 +77,27 @@ int analogRead(int pin)
 void analogWrite(int pin, int value)
 {
     simulator::pins[pin].output = value;
+}
+
+// Time
+void delay(unsigned long ms)
+{
+    std::this_thread::sleep_for(std::chrono::milliseconds(ms));
+}
+void delayMicroseconds(unsigned long us)
+{
+    std::this_thread::sleep_for(std::chrono::microseconds(us));
+}
+unsigned long micros()
+{
+    simulator::Tc = std::chrono::high_resolution_clock::now();
+    return std::chrono::duration_cast<std::chrono::microseconds>(simulator::Tc - simulator::Ti).count();
+}
+
+unsigned long millis()
+{
+    simulator::Tc = std::chrono::high_resolution_clock::now();
+    return std::chrono::duration_cast<std::chrono::milliseconds>(simulator::Tc - simulator::Ti).count();
 }
 
 // Math
@@ -116,7 +141,7 @@ bool isLowerCase(char x)
 }
 bool isPrintable(char x)
 {
-    return isprint(x);    
+    return isprint(x);
 }
 bool isPunct(char x)
 {

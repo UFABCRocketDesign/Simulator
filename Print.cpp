@@ -2,9 +2,14 @@
 
 #include "Print.h"
 
+Print::Print(std::ostream& stream) : output(stream)
+{
+
+}
+
 size_t Print::write(uint8_t c) // Virtual
 {
-    std::cout << c;
+    output << c;
     return 1;
 }
 

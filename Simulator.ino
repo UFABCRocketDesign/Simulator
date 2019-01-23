@@ -90,6 +90,11 @@ void setup() // Eh executada somente uma vez
     Serial.print(" = ");
     Serial.println(bit(141), BIN);
 
+    long bruno = 141;
+    Serial.println(bruno, BIN);
+    bitClear(bruno,3);
+    Serial.println(bruno, BIN);
+
     //random
     Serial.print("Here's a random number between 300 and 981: ");
     Serial.println(random(300, 982));
@@ -100,14 +105,29 @@ void setup() // Eh executada somente uma vez
     Serial.println(random(300, 982));
     Serial.println("I was wrong e-e");
 
-
+    Serial.println("Fim do setup");
 }
 
 void loop() // Fica em loop indefinidamente
 {
     static int i = 0;
+    i=!i;
     digitalWrite(0,i);
     digitalWrite(2,!i);
     digitalWrite(4,HIGH);
-    i=!i;
+
+    Serial.print("Iteracao: ");
+    Serial.print(i);
+    Serial.print("\t Tempo(us):");
+    Serial.print(micros());
+    Serial.print("\t Tempo(ms):");
+    Serial.print(millis());
+    Serial.print("\t pin 0:");
+    Serial.print(digitalRead(0));
+    Serial.print("\t pin 2:");
+    Serial.print(digitalRead(2));
+    Serial.print("\t pin 4:");
+    Serial.println(digitalRead(4));
+
+    while((micros()%500000) != 0);
 }

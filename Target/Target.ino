@@ -1,7 +1,14 @@
+#ifndef ARDUINO
+#include "HardwareSerial.h"
+#include "simulator.h"
+#endif
+
+
 void setup() // Eh executada somente uma vez
 {
     Serial.begin(9600);
     Serial.println("Hello World!");
+    /*
     pinMode(0, OUTPUT);
     pinMode(2, OUTPUT);
     pinMode(4, OUTPUT);
@@ -106,10 +113,19 @@ void setup() // Eh executada somente uma vez
     Serial.println("I was wrong e-e");
 
     Serial.println("Fim do setup");
+    */
 }
 
 void loop() // Fica em loop indefinidamente
 {
+    Serial.print("Line++:\t");
+    if(Serial.available())
+    {
+        Serial.write(Serial.read());
+    }
+    Serial.println();
+    delay(500);
+    /*
     static int i = 0;
     i=!i;
     digitalWrite(0,i);
@@ -130,4 +146,5 @@ void loop() // Fica em loop indefinidamente
     Serial.println(digitalRead(4));
 
     while((micros()%500000) != 0);
+    */
 }

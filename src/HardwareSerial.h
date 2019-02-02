@@ -8,7 +8,7 @@
 class HardwareSerial : public Stream
 {
 public:
-    HardwareSerial(std::ostream& stream);
+    HardwareSerial(std::ostream& outStream, std::istream& inStream);
 private:
     int baudRate;
 public:

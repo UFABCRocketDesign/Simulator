@@ -4,15 +4,17 @@
 #ifndef ARDUINO
 
 #include <iostream>
+#include <streambuf>
 #include <iomanip>
 #include <cstdlib>
 #include <string>
 #include <chrono>
 #include <future>
 #include <cctype>
+#include <thread>
 #include <cmath>
+#include <mutex>
 
-#include "HardwareSerial.h"
 
 #define HIGH 0x1
 #define LOW  0x0
@@ -42,6 +44,8 @@ namespace simulator
 
     extern std::chrono::time_point<std::chrono::high_resolution_clock> Ti; // Initial time
     extern std::chrono::time_point<std::chrono::high_resolution_clock> Tc; // Current time
+
+    extern std::mutex mtx;
 
     void showPinsMode(std::ostream& out, unsigned long long I);
     void showPinsOutput(std::ostream& out, unsigned long long I);

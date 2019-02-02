@@ -8,6 +8,8 @@ namespace simulator
 
     std::chrono::time_point<std::chrono::high_resolution_clock> Ti; // Initial time
     std::chrono::time_point<std::chrono::high_resolution_clock> Tc; // Current time
+
+    std::mutex mtx;
 }
 
 void simulator::showPinsMode(std::ostream& out, unsigned long long I)
@@ -45,6 +47,8 @@ void simulator::showPinsInput(std::ostream& out, unsigned long long I)
     }
     out << "]" << std::endl;
 }
+
+
 
 bool digitalRead(int pin)
 {
@@ -93,7 +97,6 @@ unsigned long micros()
     simulator::Tc = std::chrono::high_resolution_clock::now();
     return std::chrono::duration_cast<std::chrono::microseconds>(simulator::Tc - simulator::Ti).count();
 }
-
 unsigned long millis()
 {
     simulator::Tc = std::chrono::high_resolution_clock::now();

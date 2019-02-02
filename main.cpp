@@ -3,9 +3,14 @@
 #include <cstdlib>
 #include <iostream>
 #include <fstream>
-#include "simulator.h"
+#include <chrono>
 
-#include "Simulator.ino"
+#include "src/simulator.h"
+#include "src/HardwareSerial.h"
+
+#define _TARGET_INO "Target/Target.ino"
+
+#include _TARGET_INO
 
 std::fstream pinsOutput ("pinsOutputLog.log", std::fstream::out);
 std::fstream pinsInput  ("pinsInputLog.log", std::fstream::out);

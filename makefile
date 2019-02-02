@@ -1,9 +1,9 @@
 GPP = g++
-ADDITIONAL_FLAGS = 
-CFLAGS = $(ADDITIONAL_FLAGS) -std=c++14 -pedantic -Wall -Werror -lm
+ADDITIONAL_FLAGS = -I./src/
+CFLAGS = $(ADDITIONAL_FLAGS) -std=c++14 -pedantic -Wall -Werror -lm -lpthread
 
 RUNNER = Simulator.run
-ADDITIONAL_SOURCE = simulator.cpp HardwareSerial.cpp Stream.cpp Print.cpp
+ADDITIONAL_SOURCE = src/simulator.cpp src/HardwareSerial.cpp src/Stream.cpp src/Print.cpp
 SOURCE = main.cpp
 
 .PHONY: compile

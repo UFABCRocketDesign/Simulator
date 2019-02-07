@@ -3,6 +3,10 @@
 
 #ifndef ARDUINO
 
+#define ARDUINO_MEGA
+
+#include "virtualPins.h"
+
 #include <iostream>
 #include <streambuf>
 #include <iomanip>
@@ -32,15 +36,41 @@
 
 namespace simulator
 {
-    constexpr int pinAmount = 10;
+    constexpr int pinAmount = NUM_DIGITAL_PINS;
     struct PinIO
     {
         int output = -1; // O
         int input = -1; // I
         int mode = -1;
     };
-
     extern PinIO pins[];
+
+    enum TerminalType
+    {
+        other,
+        NC,
+        RS,
+        PIN,
+        LED,
+        GND,
+        V5,
+        V3_3,
+        RAW
+    };
+
+    struct Terminal
+    {
+        int x = -1;
+        int y = -1;
+        TerminalType type = other;
+        int pinIO = -1;
+        int lastState = -2;
+    };
+    extern Terminal terms[];
+
+    extern std::ostream& simuOut;
+
+    extern std::thread diagramThread;
 
     extern std::chrono::time_point<std::chrono::high_resolution_clock> Ti; // Initial time
     extern std::chrono::time_point<std::chrono::high_resolution_clock> Tc; // Current time
@@ -50,6 +80,7 @@ namespace simulator
     void showPinsMode(std::ostream& out, unsigned long long I);
     void showPinsOutput(std::ostream& out, unsigned long long I);
     void showPinsInput(std::ostream& out, unsigned long long I);
+    void showPinsDiagram();
 }
 
 // Digital I/O

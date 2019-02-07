@@ -17,3 +17,7 @@ run_log: compile $(RUNNER)
 .PHONY: run
 run: compile $(RUNNER)
 	@./Simulator.run
+
+.PHONY: clear
+clear:
+	rm -rf *.run *.log

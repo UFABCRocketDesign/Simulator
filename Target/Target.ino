@@ -6,8 +6,7 @@
 
 void setup() // Eh executada somente uma vez
 {
-    Serial.begin(9600);
-    Serial.println("Hello World!");
+    pinMode(LED_BUILTIN, OUTPUT);
     /*
     pinMode(0, OUTPUT);
     pinMode(2, OUTPUT);
@@ -118,13 +117,19 @@ void setup() // Eh executada somente uma vez
 
 void loop() // Fica em loop indefinidamente
 {
+    digitalWrite(LED_BUILTIN, !digitalRead(LED_BUILTIN));
+    delay(500);
+    /*
     Serial.print("Line++:\t");
     if(Serial.available())
     {
+        Serial.write('\"');
         Serial.write(Serial.read());
+        Serial.write('\"');
     }
     Serial.println();
     delay(500);
+    */
     /*
     static int i = 0;
     i=!i;

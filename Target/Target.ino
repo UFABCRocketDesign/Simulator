@@ -117,6 +117,18 @@ void setup() // Eh executada somente uma vez
 
 void loop() // Fica em loop indefinidamente
 {
+    /*
+    for (int fadeValue = 0 ; fadeValue <= 255; fadeValue += 5)
+    {
+        analogWrite(LED_BUILTIN, fadeValue);
+        delay(30);
+    }
+
+    for (int fadeValue = 255 ; fadeValue >= 0; fadeValue -= 5)
+    {
+        analogWrite(LED_BUILTIN, fadeValue);
+        delay(30);
+    }*/
     digitalWrite(LED_BUILTIN, !digitalRead(LED_BUILTIN));
     delay(500);
     /*

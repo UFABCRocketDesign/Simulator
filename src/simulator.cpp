@@ -8,12 +8,12 @@ namespace simulator
 
     Terminal terms[] =
     {
-        {0,	19, PIN,	21},
-        {1,	19, PIN,	21},
+        {0,	19, PIN,	PIN_WIRE_SCL},
+        {1,	19, PIN,	PIN_WIRE_SDA},
         {2,	19, other,  -1},
         {3,	19, GND,	-1},
         {4,	0,  NC,	-1},
-        {4,	15,	LED,	13},
+        {4,	15,	LED,	LED_BUILTIN},
         {4,	19, PIN,	13},
         {5,	0,	other,	-1},
         {5,	19, PIN,	12},
@@ -29,42 +29,43 @@ namespace simulator
         {11,	0,	RAW,	-1},
         {11,	19,	PIN,	7},
         {12,	19,	PIN,	6},
-        {13,	0,	PIN,	54},
+        {13,	0,	PIN,	PIN_A0},
         {13,	19,	PIN,	5},
-        {14,	0,	PIN,	55},
+        {14,	0,	PIN,	PIN_A1},
         {14,	19,	PIN,	4},
-        {15,	0,	PIN,	56},
+        {15,	0,	PIN,	PIN_A2},
         {15,	19,	PIN,	3},
-        {16,	0,	PIN,	57},
+        {16,	0,	PIN,	PIN_A3},
         {16,	19,	PIN,	2},
-        {17,	0,	PIN,	58},
+        {17,	0,	PIN,	PIN_A4},
         {17,	19,	PIN,	1},
-        {18,	0,	PIN,	59},
+        {18,	0,	PIN,	PIN_A5},
         {18,	9,	RS,	-1},
-        {18,	10,	PIN,	52},
-        {18,	11,	PIN,	50},
+        {18,	10,	PIN,	PIN_SPI_SCK},
+        {18,	11,	PIN,	PIN_SPI_MISO},
         {18,	19,	PIN,	0},
-        {19,	0,	PIN,	60},
+        {19,	0,	PIN,	PIN_A6},
         {19,	9,	GND,	-1},
-        {19,	10,	PIN,	51},
+        {19,	10,	PIN,	PIN_SPI_MOSI},
         {19,	11,	V5,	-1},
-        {20,	0,	PIN,	61},
+        {20,	0,	PIN,	PIN_A7},
+#if defined(ARDUINO_MEGA)
         {20,	19,	PIN,	14},
         {21,	19,	PIN,	15},
-        {22,	0,	PIN,	62},
+        {22,	0,	PIN,	PIN_A8},
         {22,	19,	PIN,	16},
-        {23,	0,	PIN,	63},
+        {23,	0,	PIN,	PIN_A9},
         {23,	19,	PIN,	17},
-        {24,	0,	PIN,	64},
+        {24,	0,	PIN,	PIN_A10},
         {24,	19,	PIN,	18},
-        {25,	0,	PIN,	65},
+        {25,	0,	PIN,	PIN_A11},
         {25,	19,	PIN,	19},
-        {26,	0,	PIN,	66},
+        {26,	0,	PIN,	PIN_A12},
         {26,	19,	PIN,	20},
-        {27,	0,	PIN,	67},
+        {27,	0,	PIN,	PIN_A13},
         {27,	19,	PIN,	21},
-        {28,	0,	PIN,	68},
-        {29,	0,	PIN,	69},
+        {28,	0,	PIN,	PIN_A14},
+        {29,	0,	PIN,	PIN_A15},
         {30,	2,	V5,	-1},
         {30,	3,	PIN,	52},
         {30,	4,	PIN,	50},
@@ -101,9 +102,12 @@ namespace simulator
         {31,	17,	PIN,	25},
         {31,	18,	PIN,	23},
         {31,	19,	GND,	-1},
+#endif
     };
 
 	std::thread diagramThread;
+
+    unsigned long long iteratarion;
 
 	std::ostream& simuOut = std::cerr;
 
@@ -111,6 +115,8 @@ namespace simulator
     std::chrono::time_point<std::chrono::high_resolution_clock> Tc; // Current time
 
     std::mutex mtx;
+
+	bool kill_threads = false;
 }
 
 void simulator::showPinsMode(std::ostream& out, unsigned long long I)
@@ -131,7 +137,8 @@ void simulator::showPinsOutput(std::ostream& out, unsigned long long I)
     for(int i = 0; i < pinAmount; i++)
     {
         if (pins[i].output<0) out << "_";
-        else out << (pins[i].output);
+        else if(!digitalPinHasPWM(i)) out << pins[i].output;
+        else out << std::hex << std::uppercase << (pins[i].output)/16 << std::nouppercase << std::dec   ;
         out << (pinAmount-1!=i?", ":"");
     }
     out << "]" << std::endl;
@@ -143,7 +150,8 @@ void simulator::showPinsInput(std::ostream& out, unsigned long long I)
     for(int i = 0; i < pinAmount; i++)
     {
         if (pins[i].input<0) out << "_";
-        else out << (pins[i].input);
+        else if(analogInputToDigitalPin(0)>i) out << pins[i].input;
+        else out << std::hex << std::uppercase << (pins[i].input)/16 << std::nouppercase << std::dec    ;
         out << (pinAmount-1!=i?", ":"");
     }
     out << "]" << std::endl;
@@ -154,54 +162,76 @@ void simulator::showPinsDiagram()
 	simuOut << "\x1b[s";
 	for(Terminal t : terms) simuOut << "\x1b[" << t.x+5 << ";" << t.y*2+5 << "fo";
 	simuOut << "\x1b[u";
-	while(1)
+	while(!kill_threads)
     {
         simuOut << "\x1b[s";
 		simuOut << "\x1b[?25l\x1b[H";
-		showPinsOutput(simuOut, 0);
-		showPinsInput(simuOut, 0);
-		showPinsMode(simuOut, 0);
+		showPinsOutput(simuOut, iteratarion);
+		showPinsInput(simuOut, iteratarion);
+		showPinsMode(simuOut, iteratarion);
         for(Terminal& t : terms)
         {
-            simuOut << "\x1b[" << t.x+5 << ";" << t.y*2+5 << "f";
-            switch(t.type)
-            {
-                case PIN:
-                    if(t.lastState != pins[t.pinIO].output)
-                    {
-                        simuOut << "\x1b[38;2;";
-                        switch(pins[t.pinIO].output)
+			if(t.lastState != pins[t.pinIO].output)
+			{
+				t.lastState = pins[t.pinIO].output;
+				simuOut << "\x1b[" << t.x+5 << ";" << t.y*2+5 << "f";
+				switch(t.type)
+				{
+					case PIN:
+                        if(pins[t.pinIO].output < 0) simuOut << "\x1b[38;5;" << UNDEFINED_STATE_COLOR;
+                        else if(digitalPinHasPWM(t.pinIO))
                         {
-                            case 1: 	simuOut << "0;255;0"; break;
-                            case 0: 	simuOut << "255;0;0"; break;
-                            default:	simuOut << "0;0;255";
+                            simuOut << "\x1b[38;2;";
+                            simuOut << map(pins[t.pinIO].output, 0, 255, 0, 215) << ";";
+                            simuOut << map(255-pins[t.pinIO].output, 0, 255, 0, 175) << ";";
+                            simuOut << map(255-pins[t.pinIO].output, 0, 255, 0, 255 );
                         }
-                        simuOut << "mo";
-						t.lastState = pins[t.pinIO].output;
-                    }
-                    break;
-                case LED:
-                    if(t.lastState != pins[t.pinIO].output)
-                    {
-                        simuOut << "\x1b[38;2;";
-                        switch(pins[t.pinIO].output)
+                        else
                         {
-                            case 0: 	simuOut << "255;0;0"; break;
-                            case 1: 	simuOut << "0;255;0"; break;
-                            default:	simuOut << "0;0;255";
+                            simuOut << "\x1b[38;5;";
+                            switch(pins[t.pinIO].output)
+                            {
+                                case 0: simuOut << LOW_STATE_COLOR  ; break;
+                                case 1: simuOut << HIGH_STATE_COLOR; break;
+                                default: simuOut << UNDEFINED_STATE_COLOR;
+                            }
                         }
-                        simuOut << "m#";
-						t.lastState = pins[t.pinIO].output;
-                    }
-                    break;
-                default:;
-            }
-            simuOut << "\x1b[m";
-        }
+						simuOut << "mo"; break;
+						break;
+					case LED:
+                        if(!digitalPinHasPWM(t.pinIO)) simuOut << "\x1b[48;2;0;" << pins[t.pinIO].output*255 << ";0m";
+                        else if(0<pins[t.pinIO].output) simuOut << "\x1b[48;2;0;" << pins[t.pinIO].output << ";0m";
+                        else simuOut << "\x1b[m";
+						simuOut << " "; break;
+						break;
+					case NC:
+						simuOut << "x";
+						break;
+					case GND:
+						simuOut << "\x1b[38;5;" << GND_COLOR << "mo";
+						break;
+					case V5:
+						simuOut << "\x1b[38;5;" << V5_COLOR << "mo";
+						break;
+					case V3_3:
+						simuOut << "\x1b[38;5;" << V3_3_COLOR << "mo";
+						break;
+					case RS:
+						simuOut << "\x1b[38;5;" << RS_COLOR << "mo";
+						break;
+					default:;
+				}
+				simuOut << "\x1b[m";
+			}
+		}
         simuOut << "\x1b[u";
     }
 }
 
+void simulator::killThreads()
+{
+	kill_threads = true;
+}
 
 
 bool digitalRead(int pin)
@@ -212,8 +242,9 @@ bool digitalRead(int pin)
 
 void digitalWrite(int pin, int state)
 {
-    simulator::pins[pin].output = state;
-    if(simulator::pins[pin].mode == OUTPUT) simulator::pins[pin].input = state;
+    if(digitalPinHasPWM(pin)) simulator::pins[pin].output = ((state>0) * 255);
+    else simulator::pins[pin].output = (state > 0);
+    if(simulator::pins[pin].mode == OUTPUT) simulator::pins[pin].input = simulator::pins[pin].output > 0;
 }
 
 void pinMode(int pin, int mode)
@@ -234,7 +265,8 @@ int analogRead(int pin)
 
 void analogWrite(int pin, int value)
 {
-    simulator::pins[pin].output = value;
+    if(digitalPinHasPWM(pin)) simulator::pins[pin].output = value;
+    else simulator::pins[pin].output = value/255;
 }
 
 // Time

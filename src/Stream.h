@@ -17,6 +17,7 @@ class Stream : public Print
 {
 public:
     Stream(std::ostream& outStream, std::istream& inStream);
+    ~Stream();
 private:
     std::ostream& output;
     std::istream& input;
@@ -26,6 +27,7 @@ private:
     std::string GetInput();
     void inputColector();
 
+    bool threadTerminate = false;
     std::thread inputColectorThread;
 
 public:

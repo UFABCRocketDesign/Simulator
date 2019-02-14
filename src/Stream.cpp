@@ -4,20 +4,27 @@
 
 Stream::Stream(std::ostream& outStream, std::istream& inStream) : Print(outStream), output(outStream), input(inStream)
 {
-    future = std::async(std::launch::async, &Stream::GetInput, this);
     inputColectorThread = std::thread(&Stream::inputColector, this);
+}
+
+Stream::~Stream()
+{
+    threadTerminate = true;
+    input.setstate(std::ios::eofbit);
+    if(inputColectorThread.joinable())inputColectorThread.join();
 }
 
 std::string Stream::GetInput()
 {
     std::string S;
-    std::getline(input, S);
+    if(!input.eof()) std::getline(input, S);
     return S;
 }
 
 void Stream::inputColector()
 {
-    while(1)
+    future = std::async(std::launch::async, &Stream::GetInput, this);
+    while(!simulator::kill_threads && !threadTerminate)
     {
         if (future.wait_for(std::chrono::seconds(0)) == std::future_status::ready)
         {

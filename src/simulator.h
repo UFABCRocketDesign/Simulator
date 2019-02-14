@@ -3,7 +3,7 @@
 
 #ifndef ARDUINO
 
-#define ARDUINO_MEGA
+#define ARDUINO_UNO
 
 #include "virtualPins.h"
 
@@ -37,6 +37,14 @@
 namespace simulator
 {
     constexpr int pinAmount = NUM_DIGITAL_PINS;
+    constexpr int HIGH_STATE_COLOR = 160;
+    constexpr int LOW_STATE_COLOR = 39;
+    constexpr int UNDEFINED_STATE_COLOR = 239;
+    constexpr int LED_ON_COLOR = 10;
+    constexpr int GND_COLOR = 27;
+    constexpr int V5_COLOR = 9;
+    constexpr int V3_3_COLOR = 124;
+    constexpr int RS_COLOR = 11;
     struct PinIO
     {
         int output = -1; // O
@@ -50,6 +58,7 @@ namespace simulator
         other,
         NC,
         RS,
+        COM,
         PIN,
         LED,
         GND,
@@ -68,6 +77,8 @@ namespace simulator
     };
     extern Terminal terms[];
 
+    extern unsigned long long iteratarion;
+
     extern std::ostream& simuOut;
 
     extern std::thread diagramThread;
@@ -77,10 +88,13 @@ namespace simulator
 
     extern std::mutex mtx;
 
+    extern bool kill_threads;
+
     void showPinsMode(std::ostream& out, unsigned long long I);
     void showPinsOutput(std::ostream& out, unsigned long long I);
     void showPinsInput(std::ostream& out, unsigned long long I);
     void showPinsDiagram();
+    void killThreads();
 }
 
 // Digital I/O

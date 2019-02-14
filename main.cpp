@@ -18,18 +18,23 @@ std::fstream pinsMode   ("pinsModeLog.log", std::fstream::out);
 
 int main(int argc, char *argv[])
 {
+    std::cerr << "\x1b[2J";
     simulator::diagramThread = std::thread(simulator::showPinsDiagram);
     simulator::Ti = std::chrono::high_resolution_clock::now();
     simulator::Tc = std::chrono::high_resolution_clock::now();
     setup();
-    for(unsigned long long i = 0; i < 300; i++)
+    for(simulator::iteratarion = 0; simulator::iteratarion < 50 && !std::cin.eof(); simulator::iteratarion++)
     //for(;;)
     {
-        // simulator::showPinsOutput(pinsOutput, i);
-        // simulator::showPinsInput(pinsInput, i);
-        // simulator::showPinsMode(pinsMode, i);
+        // simulator::showPinsOutput(pinsOutput, simulator::iteratarion);
+        // simulator::showPinsInput(pinsInput, simulator::iteratarion);
+        // simulator::showPinsMode(pinsMode, simulator::iteratarion);
         loop();
     }
+    simulator::killThreads();
+    simulator::diagramThread.join();
+    std::cerr << "\x1b[2J";
+    if(!std::cin.eof()) std::cerr << "Press \x1b[1mEnter\x1b[m no finish";
     return 0;
 }
 

@@ -65,12 +65,12 @@ static const uint8_t A4 = PIN_A4;
 static const uint8_t A5 = PIN_A5;
 #endif
 
-#if (6<NUM_ANALOG_INPUTS)
+#if (6<NUM_ANALOG_INPUTS+2)
 #define PIN_A6   (analogInputToDigitalPin(6))
 static const uint8_t A6 = PIN_A6;
 #endif
 
-#if (7<NUM_ANALOG_INPUTS)
+#if (7<NUM_ANALOG_INPUTS+2)
 #define PIN_A7   (analogInputToDigitalPin(7))
 static const uint8_t A7 = PIN_A7;
 #endif

@@ -16,24 +16,24 @@
 class Stream : public Print
 {
 public:
-    Stream(std::ostream& outStream, std::istream& inStream);
-    ~Stream();
+	Stream(std::ostream& outStream, std::istream& inStream);
+	~Stream();
 private:
-    std::ostream& output;
-    std::istream& input;
-    std::stringstream buffer;
+	std::ostream& output;
+	std::istream& input;
+	std::stringstream buffer;
 
-    std::future<std::string> future;
-    std::string GetInput();
-    void inputColector();
+	std::future<std::string> future;
+	std::string GetInput();
+	void inputColector();
 
-    bool threadTerminate = false;
-    std::thread inputColectorThread;
+	bool threadTerminate = false;
+	std::thread inputColectorThread;
 
 public:
-    virtual int available();
-    virtual int read();
-    virtual int peek();
+	virtual int available();
+	virtual int read();
+	virtual int peek();
 };
 
 #endif

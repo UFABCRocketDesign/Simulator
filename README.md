@@ -78,9 +78,28 @@
 - [x] `highByte()`
 - [x] `lowByte()`
 
+### Serial \<Serial0\>
 
-
-
-
+- [ ] `if(Serial) \<operator bool()\>`
+- [x] `available()`
+- [ ] `availableForWrite()`
+- [x] `begin()`
+- [ ] `end()`
+- [ ] `find()`
+- [ ] `findUntil()`
+- [ ] `flush()`
+- [ ] `parseFloat()`
+- [ ] `parseInt()`
+- [x] `peek()`
+- [x] `print()`
+- [x] `println()`
+- [x] `read()`
+- [ ] `readBytes()`
+- [ ] `readBytesUntil()`
+- [ ] `readString()`
+- [ ] `readStringUntil()`
+- [ ] `setTimeout()`
+- [x] `write()`
+- [ ] `serialEvent()`
 
 

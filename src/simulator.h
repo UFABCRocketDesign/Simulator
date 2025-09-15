@@ -3,12 +3,16 @@
 
 #ifndef ARDUINO
 
-#define ARDUINO_UNO
+// #define ARDUINO_UNO
+#define ARDUINO_MEGA
+
 
 #include "virtualPins.h"
+#include "RoundArray.h"
 
 #include <iostream>
 #include <streambuf>
+#include <algorithm>
 #include <iomanip>
 #include <cstdlib>
 #include <string>
@@ -18,7 +22,11 @@
 #include <thread>
 #include <cmath>
 #include <mutex>
+#include <vector>
 
+#include <fstream> // For file output
+
+#include <sys/stat.h> // For mkfifo and file permissions
 
 #define HIGH 0x1
 #define LOW  0x0
@@ -36,66 +44,116 @@
 
 namespace simulator
 {
-    constexpr int pinAmount = NUM_DIGITAL_PINS;
-    constexpr int HIGH_STATE_COLOR = 160;
-    constexpr int LOW_STATE_COLOR = 39;
-    constexpr int UNDEFINED_STATE_COLOR = 239;
-    constexpr int LED_ON_COLOR = 10;
-    constexpr int GND_COLOR = 27;
-    constexpr int V5_COLOR = 9;
-    constexpr int V3_3_COLOR = 124;
-    constexpr int RS_COLOR = 11;
-    struct PinIO
-    {
-        int output = -1; // O
-        int input = -1; // I
-        int mode = -1;
-    };
-    extern PinIO pins[];
 
-    enum TerminalType
-    {
-        other,
-        NC,
-        RS,
-        COM,
-        PIN,
-        LED,
-        GND,
-        V5,
-        V3_3,
-        RAW
-    };
+	// constexpr wchar_t fill_circle = L'\u25CF'; // ●
+	// constexpr wchar_t empty_circle = L'\u25CB'; // ○
+	// constexpr wchar_t cross_circle = L'\u29BB'; // ⦻
+	// constexpr wchar_t big_fill_circle = L'\u2B24'; // ⬤
+	// constexpr wchar_t big_empty_circle = L'\u25EF'; // ◯
+	// constexpr wchar_t big_cross_circle = L'\u2A02'; // ⨂
 
-    struct Terminal
-    {
-        int x = -1;
-        int y = -1;
-        TerminalType type = other;
-        int pinIO = -1;
-        int lastState = -2;
-    };
-    extern Terminal terms[];
+	constexpr int pinAmount = NUM_DIGITAL_PINS;
+	constexpr int HIGH_STATE_COLOR = 160;
+	constexpr int UNCERTAIN_STATE_COLOR = 91;
+	constexpr int LOW_STATE_COLOR = 39;
+	constexpr int UNDEFINED_STATE_COLOR = 239;
+	constexpr int LED_ON_COLOR = 10;
+	constexpr int GND_COLOR = 27;
+	constexpr int V5_COLOR = 196;
+	constexpr int V3_3_COLOR = 53;
+	constexpr int RS_COLOR = 11;
+	constexpr int RAW_COLOR = 166;
 
-    extern unsigned long long iteratarion;
+	struct PinIO
+	{
+		int output = -1; // O
+		int input = -1; // I
+		int mode = -1;
+	};
+	extern PinIO pins[];
 
-    extern std::ostream& simuOut;
+	enum TerminalType
+	{
+		other,
+		NC,
+		RS,
+		COM,
+		PIN,
+		LED,
+		GND,
+		V5,
+		V3_3,
+		RAW
+	};
 
-    extern std::thread diagramThread;
+	struct Terminal
+	{
+		int x = -1;
+		int y = -1;
+		TerminalType type = other;
+		int pinIO = -1;
+		int lastState = -2;
+	};
+	extern Terminal terms[];
 
-    extern std::chrono::time_point<std::chrono::high_resolution_clock> Ti; // Initial time
-    extern std::chrono::time_point<std::chrono::high_resolution_clock> Tc; // Current time
+	extern const unsigned long long int maxIterations;
+	extern unsigned long long int iteration;
 
-    extern std::mutex mtx;
+	extern size_t arduinoDiagramNorth;
+	extern size_t arduinoDiagramWest;
 
-    extern bool kill_threads;
+	extern size_t serial0North;
+	extern size_t serial0West;
 
-    void showPinsMode(std::ostream& out, unsigned long long I);
-    void showPinsOutput(std::ostream& out, unsigned long long I);
-    void showPinsInput(std::ostream& out, unsigned long long I);
-    void showPinsDiagram();
-    void killThreads();
+	extern size_t serial0Width;
+	extern size_t serial0Heigh;
+
+	extern RoundArray<std::string> serial0Buffer;
+
+
+	extern const char* fifo_path;
+	extern mode_t fifo_mode;
+
+
+	extern std::ostream& simuOut;
+	extern std::ofstream serial0fOutput;
+	extern std::ofstream serial0fInput;
+
+	extern std::ofstream out;
+	// extern std::ifstream in;
+
+	extern std::thread diagramThread;
+	extern std::thread serialThread;
+	extern std::thread arduinoThread;
+
+	extern std::chrono::time_point<std::chrono::high_resolution_clock> Ti; // Initial time
+	extern std::chrono::time_point<std::chrono::high_resolution_clock> Tc; // Current time
+
+	extern std::mutex mtx;
+	extern std::mutex mtxSerial0;
+
+	extern bool kill_threads;
+
+	void showPinsMode(std::ostream& out, unsigned long long I);
+	void showPinsOutput(std::ostream& out, unsigned long long I);
+	void showPinsInput(std::ostream& out, unsigned long long I);
+
+	void arduinoMain();
+	void showDiagram();
+	void handleSerial0();
+
+	void killThreads();
+
+
+
+	void threadA();
+	void threadB();
+
 }
+
+// Wiring
+extern void setup();
+extern void loop();
 
 // Digital I/O
 bool digitalRead(int pin);

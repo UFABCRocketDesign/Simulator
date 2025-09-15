@@ -1,6 +1,6 @@
 GPP = g++
 ADDITIONAL_FLAGS = -I./src/
-CFLAGS = $(ADDITIONAL_FLAGS) -std=c++14 -pedantic -Wall -Werror -lm -lpthread
+CFLAGS = $(ADDITIONAL_FLAGS) -std=c++17 -pedantic -Wall -Werror -lm -lpthread
 
 RUNNER = Simulator.run
 ADDITIONAL_SOURCE = src/simulator.cpp src/HardwareSerial.cpp src/Stream.cpp src/Print.cpp

@@ -8,11 +8,13 @@
 class HardwareSerial : public Stream
 {
 public:
-    HardwareSerial(std::ostream& outStream, std::istream& inStream);
+	HardwareSerial(std::ostream& outStream, std::istream& inStream, unsigned int rxPin, unsigned int txPin);
 private:
-    int baudRate;
+	unsigned int baudRate;
+	const unsigned int pinRX;
+	const unsigned int pinTX;
 public:
-    void begin(int bd);
+	void begin(int bd);
 };
 
 extern HardwareSerial Serial;
